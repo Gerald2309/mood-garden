@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood-Garden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <section class="bodyInicio">
+        <div class="container" >
+            <h1>Mood Garden 🌱</h1>
+            <p>Hola, ¿Cómo estás?</p>
+        
+         <div id="formulario" class="raw g-3">
+                <div class="col-md-4">
+                    <label for="mood">Mood:</label>
+                    <input type="text" name="mood" id="mood" required><br><br>
+                </div>
+                <div class="col-md-8">
+                    <label for="nota">Nota:</label>
+                    <textarea name="nota" id="nota"></textarea><br><br>
+                </div>
+            </div>
+        
+               <button type="button" onclick="guardarYEntrar()">
+                    Agregar y ver registros
+               </button>
+
+        </div>
+    </section>
+
+</body>
+<script>
+    function guardarYEntrar() {
+    enviarRegistro();
+    setTimeout(() => {
+        window.location.href = "/registros";
+    }, 300);
+}
+
+    function enviarRegistro() {
+    const mood = document.getElementById("mood").value;
+    const nota = document.getElementById("nota").value;
+    console.log("Enviando JSON:", { mood, nota });
+
+    fetch("/registros", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ mood: mood, nota: nota })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("mood").value = "";
+        document.getElementById("nota").value = "";
+
+    
+    })
+    .catch(error => console.error("Error:", error));
+
+}
+</script>
+</html>

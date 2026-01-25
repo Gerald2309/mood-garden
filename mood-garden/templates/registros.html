@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Garden</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <section class="body-registros">
+
+        <h1 class="mb-4">Bienvenido a Mood Garden</h1>
+    
+        </div>
+            <div class="tabla">
+                <h2> Tus registros </h2>
+                <table  id="tabla-registros">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Mood</th>
+                            <th>Nota</th>
+                            <th>Acciones</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+    </section>
+    
+</body>
+
+<script>
+
+
+function obtenerRegistros() {
+    fetch(`/registros/data`, {
+        method: "GET"
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);
+        data.forEach(registro => agregarFila(registro));
+    })
+
+    .catch(error => console.error("Error: ", error));
+}
+
+window.onload = obtenerRegistros;
+
+
+
+function agregarFila(registro) {
+    const tabla = document.getElementById("tabla-registros").getElementsByTagName('tbody')[0];
+    const fila = tabla.insertRow();
+
+    fila.insertCell(0).innerText = registro.id;
+    fila.insertCell(1).innerText = registro.fecha;
+    fila.insertCell(2).innerText = registro.mood;
+    fila.insertCell(3).innerText = registro.nota;
+
+    const accionCell = fila.insertCell(4);
+    const btn = document.createElement("button");
+    btn.innerText = "Eliminar";
+    btn.className = "btn btn-danger btn-sm"
+
+    btn.onclick = function () {
+        eliminarRegistro(registro.id, fila);
+    }
+
+    accionCell.appendChild(btn);
+
+}
+
+function eliminarRegistro(id, fila) {
+    fetch(`/registros/${id}`, {
+        method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(() => {
+        fila.remove();
+    });
+
+}
+</script>
+</html>
